@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checklist packing – Gathering Yogyakarta</title>
+<style>
+:root{--ink:#18212b;--muted:#68727e;--line:#e7eaee;--accent:#2f6fde;--soft:#f3f7fe;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:0 18px 72px}
+header{padding:28px 0 14px}
+h1{font-size:1.5rem;line-height:1.25;margin:0 0 4px;font-weight:650;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0;font-size:.95rem}
+.bar{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.95);border-bottom:1px solid var(--line);margin:0 -18px;padding:10px 18px 12px}
+.bar-top{display:flex;justify-content:space-between;align-items:baseline;font-size:.95rem}
+.bar-top b{font-variant-numeric:tabular-nums}
+.track{height:6px;background:var(--line);border-radius:3px;margin-top:8px;overflow:hidden}
+#fill{height:100%;width:0;background:var(--accent);transition:width .2s}
+section{margin-top:30px}
+.sh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-bottom:6px;border-bottom:2px solid var(--ink)}
+h2{font-size:1.15rem;margin:0;font-weight:650}
+.cnt{color:var(--muted);font-size:.9rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sd{color:var(--muted);font-size:.9rem;margin:6px 0 0}
+h3{font-size:.95rem;margin:18px 0 0;font-weight:650;color:var(--accent)}
+.gn{color:var(--muted);font-size:.85rem;margin:2px 0 0}
+.row{display:flex;align-items:flex-start;gap:12px;padding:11px 2px;border-bottom:1px solid var(--line);cursor:pointer}
+.row input{position:absolute;opacity:0;pointer-events:none}
+.box{flex:none;width:22px;height:22px;margin-top:1px;border:2px solid #b9c1cb;border-radius:6px;display:grid;place-items:center;background:#fff;transition:background .12s,border-color .12s}
+.box::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px) scale(0);transition:transform .12s}
+.row input:checked+.box{background:var(--accent);border-color:var(--accent)}
+.row input:checked+.box::after{transform:rotate(45deg) translate(-1px,-1px) scale(1)}
+.row input:focus-visible+.box{outline:3px solid #9bbcf5;outline-offset:2px}
+.txt{flex:1;min-width:0}
+.txt b{font-weight:550}
+.txt small{display:block;color:var(--muted);font-size:.85rem;line-height:1.35}
+.qty{flex:none;font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink);min-width:2.2em;text-align:right}
+.row:has(input:checked) .txt b{color:#8b95a1;text-decoration:line-through}
+.row:has(input:checked) .qty{color:#8b95a1}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.95rem}
+td{padding:9px 2px;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.btn{margin-top:28px;font:inherit;padding:10px 16px;border:1px solid var(--line);background:#fff;border-radius:8px;color:var(--muted);cursor:pointer}
+.btn:hover{background:var(--soft)}
+.tabs{display:flex;gap:6px;margin-top:10px}
+.tab{flex:1;font:inherit;font-size:.85rem;line-height:1.25;padding:8px 4px;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:8px;cursor:pointer}
+.tab[aria-selected=true]{background:var(--soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.tab:focus-visible{outline:3px solid #9bbcf5;outline-offset:2px}
+main[hidden],.tabs[hidden]{display:none}
+.txt small.lay{color:var(--accent)}
+.chead{display:flex;align-items:center;gap:12px;width:100%;font:inherit;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:14px 2px;cursor:pointer;color:var(--ink)}
+.chead:hover{background:var(--soft)}
+.chead:focus-visible{outline:3px solid #9bbcf5;outline-offset:-2px}
+.cname{flex:1;min-width:0}
+.cname b{display:block;font-weight:600;font-size:1.05rem}
+.cname small{color:var(--muted);font-size:.85rem}
+.jnum{font-size:1.5rem;font-weight:650;font-variant-numeric:tabular-nums}
+.chev{flex:none;width:8px;height:8px;margin:0 4px 3px;border:solid var(--muted);border-width:0 2px 2px 0;transform:rotate(45deg);transition:transform .15s}
+.chead[aria-expanded=true] .chev{transform:rotate(-135deg);margin-bottom:-3px}
+.cbody{padding:0 0 8px 6px;background:#fbfcfe;border-bottom:1px solid var(--line)}
+.cbody[hidden]{display:none}
+.cbody .row:last-child{border-bottom:0}
+.ev{padding:12px 2px;border-bottom:1px solid var(--line)}
+.ev .tm{font-size:.85rem;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums}
+.ev .ti{font-weight:600;margin-top:1px}
+.ul{display:flex;gap:10px;margin-top:5px;font-size:.92rem;line-height:1.4}
+.ul .lb{flex:none;width:5.6em;color:var(--muted);font-size:.85rem;padding-top:1px}
+.ul .tx{flex:1;min-width:0}
+.bar-top[hidden],.track[hidden]{display:none}
+@media(max-width:420px){.tab{font-size:.78rem;padding:8px 2px}}
+.sq{display:block;width:100%;margin-top:8px;font:inherit;font-size:16px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+.sq:focus-visible{outline:3px solid #9bbcf5;outline-offset:1px;border-color:var(--accent)}
+.row[hidden],.ev[hidden],section[hidden]{display:none}
+@media print{.sq{display:none}}
+@media print{.bar .tabs,.btn{display:none}.cbody[hidden]{display:block}.row{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>Checklist packing</h1>
+<p class="sub">Gathering PT. Nusa Raya Cipta Tbk, Yogyakarta, 30 Oktober – 1 November 2026. Urutan bagian di bawah adalah urutan packing: lapisan bawah dulu, lapisan atas terakhir.</p>
+</header>
+<div class="bar">
+<div class="bar-top"><span id="barlabel">Sudah disiapkan</span><b id="total">0 / 0</b></div>
+<div class="track"><div id="fill"></div></div>
+<div class="tabs" role="tablist"><button class="tab" role="tab" data-p="main" aria-selected="true" type="button">Urutan packing</button><button class="tab" role="tab" data-p="cat" aria-selected="false" type="button">Per kategori</button><button class="tab" role="tab" data-p="day" aria-selected="false" type="button">Daypack Day 2</button><button class="tab" role="tab" data-p="todo" aria-selected="false" type="button">Ceklis lainnya</button></div>
+<input class="sq" id="q" type="search" placeholder="Cari nama barang, mis. sepatu" aria-label="Cari nama barang" autocomplete="off">
+</div>
+<main id="list"></main>
+<main id="list2" hidden></main>
+<main id="list3" hidden></main>
+<main id="list5" hidden></main>
+<p class="gn" id="nores" hidden style="margin-top:24px">Tidak ada barang yang cocok.</p>
+
+<section id="sum">
+<div class="sh"><h2>Ringkasan jumlah</h2></div>
+<table>
+<tr><td>Atasan</td><td>8 di tas + 1 dipakai</td></tr>
+<tr><td>Bawahan</td><td>4 di tas + 1 dipakai</td></tr>
+<tr><td>Pakaian dalam</td><td>5 di tas + 1 dipakai</td></tr>
+<tr><td>Kaus kaki</td><td>3</td></tr>
+<tr><td>Alas kaki</td><td>1 sepatu di tas + sandal dipakai</td></tr>
+<tr><td>Jaket</td><td>1</td></tr>
+<tr><td>Tas</td><td>besar 1 (berisi daypack), pinggang 1, tote bag 2</td></tr>
+<tr><td>Kantong plastik</td><td>6</td></tr>
+<tr><td>Charger</td><td>2 kabel + 2 kepala</td></tr>
+</table>
+</section>
+<button class="btn" id="reset" type="button">Hapus semua centang</button>
+</div>
+
+<script>
+const S=[
+{t:"Dipakai di badan saat berangkat",d:"Siap basah untuk Jeep Merapi.",g:[
+{i:[
+["Kemeja coklat kotak-kotak","×1","Set A, dipakai sampai Jeep selesai"],
+["Levi's hitam","×1","Lama kering kalau basah. Gantung di hotel malam pertama"],
+["Pakaian dalam","×1",""],
+["Sandal anti air","×1 pasang","Setelah Jeep dibungkus plastik, dipakai lagi di Goa Pindul"]]}]},
+
+{t:"Dibawa langsung",d:"Tas pinggang dan barang yang harus cepat diraih.",g:[
+{i:[
+["Tas besar","×1","Isinya ada di tiga lapisan di bawah"],
+["Tas pinggang","×1","Waterproof. Ikut ke Jeep dan cave tubing"],
+["Dompet","×1","Berisi KTP dan ATM"],
+["Uang tunai","",""],
+["HP","×1",""],
+["Power bank","×1",""],
+["Lap kacamata","×1","Di tas pinggang"],
+["Cairan kacamata","×1","Semprotan. Di tas pinggang"],
+["Semprotan anti air kacamata","×1",""],
+["Jas hujan plastik","×1","Untuk Jeep, kalau tidak mau basah"],
+["Jaket","×1","Dipakai di kereta, lalu disangkutkan di luar tas"],
+["Hand sanitizer","×1",""],
+["Tisu kering","×1",""],
+["Botol Aqua","×2","Dibeli saat berangkat"],
+["Jajan kereta","",""]]}]},
+
+{t:"Tas besar, lapisan bawah",d:"Masuk pertama: barang berat dan yang dipakai belakangan.",g:[
+{h:"Day 3",n:"Celana: pakai ulang celana bahan krem dari Day 1.",i:[
+["Kaos polos putih","×1","Lapisan dalam, dipakai di balik kemeja coklat (double layer)"],
+["Kemeja coklat","×1","Lapisan luar, dari check-out sampai pulang"],
+["Pakaian dalam","×1",""],
+["Kaus kaki","×1",""]]},
+{h:"Cadangan",i:[
+["Kaos polos hijau","×1","Satu-satunya cadangan atasan"],
+["Pakaian dalam","×1",""]]},
+{h:"Styling",i:[
+["Setrika","×1",""],
+["Catokan","×1",""],
+["Hair dryer","×1",""]]},
+{h:"Oleh-oleh",i:[
+["Tote bag","×1","Dibiarkan kosong untuk oleh-oleh Day 3"]]}]},
+
+{t:"Tas besar, lapisan tengah",d:"Malam pertama, Day 2, perawatan, dan elektronik.",g:[
+{h:"Malam pertama",i:[
+["Kaos hitam polos","×1","Baju tidur"],
+["Celana training panjang hitam","×1","Dipakai dua malam"]]},
+{h:"Day 2",n:"Daypack masuk di dalam tas besar. Barang Day 2 dipindah ke daypack malam pertama di hotel (lihat tab Daypack Day 2).",i:[
+["Daypack kecil","×1",""],
+["Jersey hitam","×1","Outbond dan cave tubing"],
+["Celana pendek","×1","Outbond dan cave tubing"],
+["Kemeja krem","×1","Santai setelah tubing sampai sekitar 16.30"],
+["Jeans biru","×1","Dari setelah tubing sampai gala dinner"],
+["Kaos polos putih","×1","Gala dinner, ganti sekitar 16.30"],
+["Pakaian dalam","×2","Pagi Day 2 dan setelah tubing"],
+["Kaus kaki","×1","Gala dinner"],
+["Waterproof case","×1","Hanya untuk Goa Pindul, tidak dipakai di Jeep"],
+["Tempat kacamata","×1","Untuk menyimpan kacamata kalau dilepas di cave tubing"]]},
+{h:"Perawatan",n:"Satu pouch.",i:[
+["Sikat gigi","×1",""],["Pasta gigi","×1",""],["Sabun","×1",""],["Sabun muka","×1",""],
+["Sampo","×1",""],["Kondisioner","×1",""],["Deodoran","×1",""],["Sunscreen","×1",""],
+["Moisturizer","×1",""],["Hand body","×1",""],["Parfum","×1",""],["Pomade","×1",""],["Sisir","×1",""]]},
+{h:"Elektronik",i:[
+["Kabel charger","×2","Satu untuk HP, satu untuk power bank"],
+["Kepala charger","×2",""],
+["Colokan T","×1",""],
+["Headset kabel","×1",""],
+["Headset bluetooth","×1",""]]},
+{h:"Jajan",i:[
+["Jajan hotel dan selama acara","",""]]}]},
+
+{t:"Tas besar, lapisan atas",d:"Masuk terakhir. Diambil setelah Jeep Merapi, sekitar 10.30.",g:[
+{h:"Ganti setelah Jeep",i:[
+["Baju biru muda","×1","Untuk Borobudur dan VW Safari"],
+["Celana bahan krem","×1","Dipakai lagi di Day 3"],
+["Sabuk celana","×1",""],
+["Pakaian dalam","×1",""],
+["Kaus kaki","×1",""],
+["Sepatu","×1","Bungkus plastik"],
+["Handuk kecil","×1","Dipakai lagi setelah cave tubing"],
+["Tote bag","×1","Khusus pakaian basah dan kotor"],
+["Kantong plastik","×6","Baju basah Jeep, sandal, sepatu, baju dan handuk basah tubing, 2 cadangan (sampah)"]]},
+{h:"Cuaca",i:[
+["Topi","×1",""],
+["Payung","×1","Untuk Borobudur kalau panas"]]}]}
+];
+const KEY='checklist-gathering-jogja-v3';
+let st={};
+try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+let uid=0;
+const html=S.map((s,si)=>{
+  const ids=[];
+  const body=s.g.map(g=>{
+    const rows=g.i.map(it=>{
+      const id='i'+(uid++);ids.push(id);
+      return `<label class="row"><input type="checkbox" id="${id}" data-s="${si}"><span class="box"></span><span class="txt"><b>${esc(it[0])}</b>${it[2]?`<small>${esc(it[2])}</small>`:''}</span><span class="qty">${esc(it[1])}</span></label>`;
+    }).join('');
+    return (g.h?`<h3>${esc(g.h)}</h3>`:'')+(g.n?`<p class="gn">${esc(g.n)}</p>`:'')+rows;
+  }).join('');
+  return `<section><div class="sh"><h2>${esc(s.t)}</h2><span class="cnt" id="c${si}"></span></div><p class="sd">${esc(s.d)}</p>${body}</section>`;
+}).join('');
+document.getElementById('list').innerHTML=html;
+const boxes=[...document.querySelectorAll('#list input')];
+function updateBar(){
+  const isD=tabP==='day',isK=tabP==='todo';
+  const bs=isK?tboxes:isD?dboxes:boxes;
+  const done=bs.filter(b=>b.checked).length;
+  document.getElementById('barlabel').textContent=isK?'Sudah dikerjakan':isD?'Sudah dipindah':'Sudah disiapkan';
+  document.getElementById('total').textContent=done+' / '+bs.length;
+  document.getElementById('fill').style.width=(bs.length?done/bs.length*100:0)+'%';
+}
+function update(){
+  S.forEach((s,si)=>{
+    const bs=boxes.filter(b=>b.dataset.s==si);
+    document.getElementById('c'+si).textContent=bs.filter(b=>b.checked).length+' / '+bs.length;
+  });
+  refreshCat();
+  updateBar();
+}
+boxes.forEach(b=>{
+  b.checked=!!st[b.id];
+  b.addEventListener('change',()=>{st[b.id]=b.checked;save();update()});
+});
+document.getElementById('reset').addEventListener('click',()=>{
+  if(tabP==='todo'){
+    if(!confirm('Hapus semua centang ceklis lainnya?'))return;
+    tst={};tsave();tboxes.forEach(b=>b.checked=false);updateT();return;
+  }
+  if(tabP==='day'){
+    if(!confirm('Hapus semua centang daypack?'))return;
+    dst={};dsave();dboxes.forEach(b=>b.checked=false);updateD();return;
+  }
+  if(!confirm('Hapus semua centang?'))return;
+  st={};save();boxes.forEach(b=>b.checked=false);update();
+});
+const CAT=[
+["Atasan",["Kemeja coklat kotak-kotak","Baju biru muda","Kaos hitam polos","Jersey hitam","Kemeja krem","Kaos polos putih","Kemeja coklat","Kaos polos hijau"]],
+["Bawahan",["Levi's hitam","Celana bahan krem","Celana training panjang hitam","Celana pendek","Jeans biru"]],
+["Pakaian dalam",["Pakaian dalam"]],
+["Kaus kaki",["Kaus kaki"]],
+["Alas kaki",["Sandal anti air","Sepatu"]],
+["Pelengkap dan cuaca",["Sabuk celana","Jaket","Topi","Payung","Jas hujan plastik"]],
+["Tas dan wadah",["Tas besar","Tas pinggang","Daypack kecil","Tote bag","Kantong plastik"]],
+["Dompet dan uang",["Dompet","Uang tunai"]],
+["Elektronik",["HP","Waterproof case","Power bank","Kabel charger","Kepala charger","Colokan T","Headset kabel","Headset bluetooth"]],
+["Kacamata",["Tempat kacamata","Lap kacamata","Cairan kacamata","Semprotan anti air kacamata"]],
+["Perawatan",["Sikat gigi","Pasta gigi","Sabun","Sabun muka","Sampo","Kondisioner","Deodoran","Sunscreen","Moisturizer","Hand body","Parfum","Pomade","Sisir","Handuk kecil","Hand sanitizer","Tisu kering"]],
+["Styling",["Setrika","Catokan","Hair dryer"]],
+["Makanan dan minuman",["Botol Aqua","Jajan kereta","Jajan hotel dan selama acara"]],
+["Lainnya",[]]
+];
+const catOf={};CAT.forEach(c=>c[1].forEach(n=>catOf[n]=c[0]));
+const byCat={};CAT.forEach(c=>byCat[c[0]]=[]);
+let seq=0;
+S.forEach(s=>s.g.forEach(g=>g.i.forEach(it=>{
+  (byCat[catOf[it[0]]||'Lainnya']).push({k:'i'+(seq++),it,s:s.t});
+})));
+const cats=CAT.map(c=>c[0]).filter(c=>byCat[c].length);
+const tot={},worn={};
+S.forEach((s,si)=>s.g.forEach(g=>g.i.forEach(it=>{
+  const k=catOf[it[0]]||'Lainnya',q=parseInt((it[1]||'').replace(/\D/g,''))||1;
+  tot[k]=(tot[k]||0)+q;
+  if(si===0)worn[k]=(worn[k]||0)+q;
+})));
+document.getElementById('list2').innerHTML=cats.map((c,ci)=>{
+  const t=tot[c],w=worn[c]||0;
+  const rows=byCat[c].map(o=>`<label class="row"><input type="checkbox" data-k="${o.k}" data-c="${ci}"><span class="box"></span><span class="txt"><b>${esc(o.it[0])}</b><small class="lay">${esc(o.s)}</small>${o.it[2]?`<small>${esc(o.it[2])}</small>`:''}</span><span class="qty">${esc(o.it[1])}</span></label>`).join('');
+  return `<section class="cat"><button class="chead" type="button" aria-expanded="false"><span class="cname"><b>${esc(c)}</b><small>${w?(t-w)+' di tas + '+w+' dipakai · ':''}<span id="k${ci}"></span> item siap</small></span><span class="jnum">${t}</span><span class="chev"></span></button><div class="cbody" hidden>${rows}</div></section>`;
+}).join('');
+document.querySelectorAll('.chead').forEach(h=>h.addEventListener('click',()=>{
+  const open=h.getAttribute('aria-expanded')==='true';
+  h.setAttribute('aria-expanded',String(!open));
+  h.nextElementSibling.hidden=open;
+}));
+const cboxes=[...document.querySelectorAll('#list2 input')];
+function refreshCat(){
+  cboxes.forEach(b=>b.checked=!!st[b.dataset.k]);
+  cats.forEach((c,ci)=>{
+    const bs=cboxes.filter(b=>b.dataset.c==ci);
+    document.getElementById('k'+ci).textContent=bs.filter(b=>b.checked).length+' / '+bs.length;
+  });
+}
+cboxes.forEach(b=>b.addEventListener('change',()=>{
+  st[b.dataset.k]=b.checked;save();
+  boxes.forEach(m=>m.checked=!!st[m.id]);
+  update();
+}));
+const DP=[
+{t:"Isi daypack Day 2",d:"Dipindah dari tas besar malam pertama di hotel. Tas besar ditinggal di hotel selama Day 2. Jersey hitam dan celana pendek sudah dipakai dari pagi.",g:[
+{h:"Pakaian dan alas kaki",i:[
+["Kemeja krem","×1","Santai setelah tubing sampai sekitar 16.30"],
+["Jeans biru","×1","Dari setelah tubing sampai gala dinner"],
+["Kaos polos putih","×1","Gala dinner, ganti sekitar 16.30"],
+["Pakaian dalam","×1","Ganti setelah tubing"],
+["Kaus kaki","×1","Dipakai bersama sepatu"],
+["Sepatu","×1","Bungkus plastik. Dipakai setelah tubing"],
+["Handuk kecil","×1","Dipakai setelah cave tubing"]]},
+{h:"Cave tubing",i:[
+["Waterproof case","×1","Untuk HP di Goa Pindul"],
+["Tempat kacamata","×1","Kalau kacamata dilepas di cave tubing"]]},
+{h:"Plastik",i:[
+["Kantong plastik","×2","Baju dan handuk basah setelah tubing, sandal basah"]]},
+{h:"Perawatan mini",n:"Ambil dari pouch perawatan.",i:[
+["Sunscreen","×1",""],["Deodoran","×1",""],["Sisir","×1",""],["Parfum","×1",""],["Pomade","×1",""]]},
+{h:"Jajan",i:[
+["Jajan Day 2","",""]]}]}
+];
+const DKEY='checklist-gathering-jogja-daypack-v1';
+let dst={};
+try{dst=JSON.parse(localStorage.getItem(DKEY)||'{}')}catch(e){}
+function dsave(){try{localStorage.setItem(DKEY,JSON.stringify(dst))}catch(e){}}
+let did=0;
+document.getElementById('list3').innerHTML=DP.map((s,si)=>{
+  const body=s.g.map(g=>{
+    const rows=g.i.map(it=>{
+      const id='d'+(did++);
+      return `<label class="row"><input type="checkbox" id="${id}" data-d="${si}"><span class="box"></span><span class="txt"><b>${esc(it[0])}</b>${it[2]?`<small>${esc(it[2])}</small>`:''}</span><span class="qty">${esc(it[1])}</span></label>`;
+    }).join('');
+    return (g.h?`<h3>${esc(g.h)}</h3>`:'')+(g.n?`<p class="gn">${esc(g.n)}</p>`:'')+rows;
+  }).join('');
+  return `<section><div class="sh"><h2>${esc(s.t)}</h2><span class="cnt" id="dc${si}"></span></div><p class="sd">${esc(s.d)}</p>${body}</section>`;
+}).join('');
+const dboxes=[...document.querySelectorAll('#list3 input')];
+function updateD(){
+  DP.forEach((s,si)=>{
+    const bs=dboxes.filter(b=>b.dataset.d==si);
+    document.getElementById('dc'+si).textContent=bs.filter(b=>b.checked).length+' / '+bs.length;
+  });
+  updateBar();
+}
+dboxes.forEach(b=>{
+  b.checked=!!dst[b.id];
+  b.addEventListener('change',()=>{dst[b.id]=b.checked;dsave();updateD()});
+});
+
+const TD=[
+{t:"Perbaikan",d:"Dikerjakan sebelum berangkat. Bukan bagian dari packing.",g:[{i:[
+["Perbaiki resleting daypack","","Daypack kecil yang dipakai di Day 2"],
+["Tambal celana Levi’s hitam yang bolong","","Levi’s hitam dipakai saat berangkat dan Jeep Day 1"],
+["Tambah kancing di kemeja biru","",""]]}]},
+{t:"Belanja",d:"Dibeli sebelum berangkat.",g:[{i:[
+["Beli pemutih putih: Brooklyn putih atau Vanish putih","","Untuk memutihkan baju putih yang dipakai di Day 3"]]}]}
+];
+const TKEY='checklist-gathering-jogja-lainnya-v1';
+let tst={};
+try{tst=JSON.parse(localStorage.getItem(TKEY)||'{}')}catch(e){}
+function tsave(){try{localStorage.setItem(TKEY,JSON.stringify(tst))}catch(e){}}
+let tid=0;
+document.getElementById('list5').innerHTML=TD.map((s,si)=>{
+  const body=s.g.map(g=>g.i.map(it=>{
+    const id='t'+(tid++);
+    return `<label class="row"><input type="checkbox" id="${id}" data-t="${si}"><span class="box"></span><span class="txt"><b>${esc(it[0])}</b>${it[2]?`<small>${esc(it[2])}</small>`:''}</span><span class="qty">${esc(it[1])}</span></label>`;
+  }).join('')).join('');
+  return `<section><div class="sh"><h2>${esc(s.t)}</h2><span class="cnt" id="tc${si}"></span></div><p class="sd">${esc(s.d)}</p>${body}</section>`;
+}).join('');
+const tboxes=[...document.querySelectorAll('#list5 input')];
+function updateT(){
+  TD.forEach((s,si)=>{
+    const bs=tboxes.filter(b=>b.dataset.t==si);
+    document.getElementById('tc'+si).textContent=bs.filter(b=>b.checked).length+' / '+bs.length;
+  });
+  updateBar();
+}
+tboxes.forEach(b=>{
+  b.checked=!!tst[b.id];
+  b.addEventListener('change',()=>{tst[b.id]=b.checked;tsave();updateT()});
+});
+function applySearch(){
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  const root=document.getElementById({main:'list',cat:'list2',day:'list3',todo:'list5'}[tabP]);
+  let shown=0;
+  root.querySelectorAll('section').forEach(sec=>{
+    let any=false;
+    {
+      sec.querySelectorAll('.row').forEach(r=>{const m=!q||r.querySelector('.txt b').textContent.toLowerCase().includes(q);r.hidden=!m;any=any||m});
+      let cur=[],ca=false;
+      const flush=()=>cur.forEach(e=>e.hidden=!!q&&!ca);
+      [...sec.children].forEach(c=>{
+        if(c.tagName==='H3'){flush();cur=[c];ca=false}
+        else if(c.classList.contains('gn')){cur.push(c)}
+        else if(c.classList.contains('row')){ca=ca||!c.hidden}
+      });
+      flush();
+      const body=sec.querySelector('.cbody');
+      if(body)body.hidden=q?false:sec.querySelector('.chead').getAttribute('aria-expanded')!=='true';
+    }
+    sec.hidden=!!q&&!any;
+    if(!sec.hidden)shown++;
+  });
+  document.getElementById('nores').hidden=!(q&&!shown);
+  document.getElementById('sum').hidden=!!q||tabP==='day'||tabP==='todo';
+}
+document.getElementById('q').addEventListener('input',applySearch);
+const tabs=[...document.querySelectorAll('.tab')];
+let tabP='main';
+function show(){
+  document.getElementById('list').hidden=tabP!=='main';
+  document.getElementById('list2').hidden=tabP!=='cat';
+  document.getElementById('list3').hidden=tabP!=='day';
+  document.getElementById('list5').hidden=tabP!=='todo';
+  document.getElementById('sum').hidden=tabP==='day'||tabP==='todo';
+  updateBar();
+  applySearch();
+  window.scrollTo(0,0);
+}
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  tabs.forEach(x=>x.setAttribute('aria-selected',String(x===t)));
+  tabP=t.dataset.p;show();
+}));
+update();
+updateD();
+updateT();
+</script>
+</body>
+</html>
